@@ -1,5 +1,5 @@
 applications:
- - name: "Venba"
+ - name: "SeerAsaiSearch"
    random-route: true
    memory: 256M
    buildpacks:
