@@ -1,0 +1,7 @@
+applications:
+ - name: "Venba"
+   random-route: true
+   memory: 256M
+   buildpacks:
+    - python_buildpack
+    
