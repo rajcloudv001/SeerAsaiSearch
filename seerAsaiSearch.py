@@ -45,11 +45,11 @@ def process(word, meaning, asai, seer, wordSearchTypeKey):
             tWord = word.strip()
             tWord = tWord.translate ({ord(c): "" for c in "!@#$%^&*()[]{};:,./<>?\|`~-=_+"})
 
-            if wordSearchTypeKey in ['startwith', ' ']:
+            if wordSearchTypeKey == 'startwith':
                 tWord = '^'+tWord
             elif wordSearchTypeKey == 'endwith':
                 tWord = tWord+'$'
-            elif wordSearchTypeKey == 'contains':
+            elif wordSearchTypeKey in ['contains', ' ']:
                 tWord = tWord
             elif wordSearchTypeKey == 'containsAny':
                 tWord = tWord.replace(' ', '|')

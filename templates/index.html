@@ -130,7 +130,7 @@
                     <td><label>சொல் </label></td>
                     <td style="word-wrap: normal;" colspan="2">
                         <select name="wordSearchTypeKey" id="wordSearchTypeKey">
-                            <option value=" " selected disabled hidden>Word start with</option>
+                            <option value=" " selected disabled hidden>Word contains</option>
                             {% for key,val in wordSearchType.items() %}
                             <option value="{{key}}">{{val}}</option>
                             {% endfor %}
