@@ -17,10 +17,41 @@
             -ms-transform: translate(-50%, -50%);
             transform: translate(-50%, -50%);
         }
-        input[type=text] { 
+        input[type=text] {
             box-sizing: border-box;
         }
-
+        .tooltip {
+          position: relative;
+          display: inline-block;
+          border-bottom: 1px dotted black;
+        }
+        .tooltip .tooltiptext {
+          visibility: hidden;
+          width: 200px;
+          background-color: black;
+          color: #fff;
+          text-align: center;
+          border-radius: 6px;
+          padding: 5px 0;
+          position: absolute;
+          z-index: 1;
+          bottom: 150%;
+          left: 50%;
+          margin-left: -60px;
+        }
+        .tooltip .tooltiptext::after {
+          content: "";
+          position: absolute;
+          top: 100%;
+          left: 50%;
+          margin-left: -5px;
+          border-width: 5px;
+          border-style: solid;
+          border-color: black transparent transparent transparent;
+        }
+        .tooltip:hover .tooltiptext {
+          visibility: visible;
+        }
         .button {
           background-color: #4CAF50;
           border: none;
@@ -97,8 +128,16 @@
                 <tr>
                     <td></td>
                     <td><label>சொல் </label></td>
-                    <td> <input type="text" name="word" id="word"><br/>(.ழ்/வா = வாழ்க)</td>
-                    <td> </td>
+                    <td style="word-wrap: normal;" colspan="2">
+                        <select name="wordSearchTypeKey" id="wordSearchTypeKey">
+                            <option value=" " selected disabled hidden>Word start with</option>
+                            {% for key,val in wordSearchType.items() %}
+                            <option value="{{key}}">{{val}}</option>
+                            {% endfor %}
+                        </select>&nbsp&nbsp<div class="tooltip"><input type="text" name="word" id="word" />
+                        <span class="tooltiptext">For <i>Word contains any</i> and
+                            <i>Word contains any</i>, give space between words like "ழி டு" -> "வழிபாடு" </span>
+                        </div></td>
                 </tr>
             </table>
             <table style="table-layout: fixed;">

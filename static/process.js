@@ -1,15 +1,18 @@
 $(document).ready(function() {
 	$('#inputForm').on('submit', function(event) {
+	    $('#status').html('Searching ......');
 	    var seer = $('#seer').val();
 	    var asai = $('#asai').val();
 	    var word = $('#word').val().trim();
 	    var meaning = $('#meaning').val().trim();
+	    var wordSearchTypeKey = $('#wordSearchTypeKey').val();
         $.ajax({
             data : {
                 seer : seer,
                 asai : asai,
                 word : word,
-                meaning : meaning
+                meaning : meaning,
+                wordSearchTypeKey : wordSearchTypeKey
             },
             type : 'POST',
             url : '/process'

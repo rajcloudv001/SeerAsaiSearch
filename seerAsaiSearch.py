@@ -22,11 +22,14 @@ def render_main():
             "கூவிளநறும்பூ", "தேமாந்தண்ணிழல்", "புளிமாந்தண்ணிழல்", "கருவிளந்தண்ணிழல்", "கூவிளந்தண்ணிழல்", "தேமாநறுநிழல்",
             "புளிமாநறுநிழல்", "கருவிளநறுநிழல்", "கூவிளநறுநிழல்"]
 
-    return render_template("index.html", seer=seer, asai=asai)
+    wordSearchType = {"startwith": "Word start with", "endwith": "Word end with", "contains": "Word contains",
+                      "containsAny": "Word contains any", "containsAll": "Word contains all"}
+
+    return render_template("index.html", seer=seer, asai=asai, wordSearchType=wordSearchType)
     # return render_template("index.html")
 
 
-def process(word, meaning, asai, seer):
+def process(word, meaning, asai, seer, wordSearchTypeKey):
     global df
     try:
         tdf = df[:]
@@ -37,16 +40,42 @@ def process(word, meaning, asai, seer):
                 tdf = tdf[tdf.seer == seer]
         if asai is not None and asai not in [' ', '']:
             tdf = tdf[tdf.asai == asai]
+
         if word is not None and word not in [' ', '']:
-            try:
-                word = word.rstrip('.')
-                if word[0] == '.':
-                    word = word + '.'
-                    tdf = tdf[tdf.word.str.contains(word, regex=True)]
-                else:
-                    tdf = tdf[tdf.word.str.startswith(word)]
-            except:
-                tdf = tdf[tdf.word == False]
+            tWord = word.strip()
+            tWord = tWord.translate ({ord(c): "" for c in "!@#$%^&*()[]{};:,./<>?\|`~-=_+"})
+
+            if wordSearchTypeKey in ['startwith', ' ']:
+                tWord = '^'+tWord
+            elif wordSearchTypeKey == 'endwith':
+                tWord = tWord+'$'
+            elif wordSearchTypeKey == 'contains':
+                tWord = tWord
+            elif wordSearchTypeKey == 'containsAny':
+                tWord = tWord.replace(' ', '|')
+            elif wordSearchTypeKey == 'containsAll':
+                #from itertools import permutations
+                #wordList = list(permutations(tword, tword.count(' ')+1))
+                #tword = '|'.join(['(.*?)'.join(w) + '.' for w in wordList])
+                tWord = tWord.replace(' ', '(.*?)')
+            else:
+                tWord = '---'
+            # print(tWord)
+            tdf = tdf[tdf.word.str.contains(tWord, regex=True)]
+        else:
+            tdf = tdf[tdf.word == False]
+
+        # if word is not None and word not in [' ', '']:
+        #     try:
+        #         word = word.rstrip('.')
+        #         if word[0] == '.':
+        #             word = word + '.'
+        #             tdf = tdf[tdf.word.str.contains(word, regex=True)]
+        #         else:
+        #             tdf = tdf[tdf.word.str.startswith(word)]
+        #     except:
+        #         tdf = tdf[tdf.word == False]
+
         if meaning is not None and meaning not in [' ', '']:
             try:
                 meaning = meaning.strip('.')
@@ -82,14 +111,15 @@ def startProcess():
     meaning = request.form['meaning']
     asai = request.form['asai']
     seer = request.form['seer']
+    wordSearchTypeKey = request.form['wordSearchTypeKey']
     try:
         status = ' '
         # result = [{'word': ' ', 'meaning': ' ', 'asai': ' ', 'seer': ' '}]
-        print("word : " + word)
-        print("meaning : " + meaning)
-        print("asai : " + asai)
-        print("seer : " + seer)
-        result, status = process(word, meaning, asai, seer)
+        # print("word : " + word)
+        # print("meaning : " + meaning)
+        # print("asai : " + asai)
+        # print("seer : " + seer)
+        result, status = process(word, meaning, asai, seer, wordSearchTypeKey)
     except:
         result = [{'word': ' ', 'meaning': ' ', 'asai': ' ', 'seer': ' '}]
         status = ' '
