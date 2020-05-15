@@ -62,8 +62,6 @@ def process(word, meaning, asai, seer, wordSearchTypeKey):
                 tWord = '---'
             # print(tWord)
             tdf = tdf[tdf.word.str.contains(tWord, regex=True)]
-        else:
-            tdf = tdf[tdf.word == False]
 
         # if word is not None and word not in [' ', '']:
         #     try:
