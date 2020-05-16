@@ -34,30 +34,36 @@ def process(word, meaning, asai, seer, wordSearchTypeKey):
     try:
         tdf = df[:]
         if seer is not None and seer not in [' ', '']:
-            if seer in ['நேர்பு', 'நிரைபு']:
+            if seer in ['காசு', 'பிறப்பு']:
                 tdf = tdf[tdf.seerpu == seer]
             else:
                 tdf = tdf[tdf.seer == seer]
         if asai is not None and asai not in [' ', '']:
-            tdf = tdf[tdf.asai == asai]
+            if asai in ['நேர்பு', 'நிரைபு']:
+                tdf = tdf[tdf.asaipu == asai]
+            else:
+                tdf = tdf[tdf.asai == asai]
 
         if word is not None and word not in [' ', '']:
-            tWord = word.strip()
-            tWord = tWord.translate ({ord(c): "" for c in "!@#$%^&*()[]{};:,./<>?\|`~-=_+"})
+            if len(word) == len(word.translate({ord(c): "" for c in """!@#$%^&*()[]{};:,./<>?\|`~-=_+"'"""})):
+                tWord = word.strip()
+                tWord = tWord.translate ({ord(c): "" for c in """!@#$%^&*()[]{};:,./<>?\|`~-=_+"'"""})
 
-            if wordSearchTypeKey == 'startwith':
-                tWord = '^'+tWord
-            elif wordSearchTypeKey == 'endwith':
-                tWord = tWord+'$'
-            elif wordSearchTypeKey in ['contains', ' ']:
-                tWord = tWord
-            elif wordSearchTypeKey == 'containsAny':
-                tWord = tWord.replace(' ', '|')
-            elif wordSearchTypeKey == 'containsAll':
-                #from itertools import permutations
-                #wordList = list(permutations(tword, tword.count(' ')+1))
-                #tword = '|'.join(['(.*?)'.join(w) + '.' for w in wordList])
-                tWord = tWord.replace(' ', '(.*?)')
+                if wordSearchTypeKey == 'startwith':
+                    tWord = '^'+tWord
+                elif wordSearchTypeKey == 'endwith':
+                    tWord = tWord+'$'
+                elif wordSearchTypeKey in ['contains', ' ']:
+                    tWord = tWord
+                elif wordSearchTypeKey == 'containsAny':
+                    tWord = tWord.replace(' ', '|')
+                elif wordSearchTypeKey == 'containsAll':
+                    #from itertools import permutations
+                    #wordList = list(permutations(tword, tword.count(' ')+1))
+                    #tword = '|'.join(['(.*?)'.join(w) + '.' for w in wordList])
+                    tWord = tWord.replace(' ', '(.*?)')
+                else:
+                    tWord = '---'
             else:
                 tWord = '---'
             # print(tWord)
@@ -76,11 +82,15 @@ def process(word, meaning, asai, seer, wordSearchTypeKey):
 
         if meaning is not None and meaning not in [' ', '']:
             try:
-                meaning = meaning.strip('.')
-                meaning = '.' + meaning + '.'
-                tdf = tdf[tdf.meaning.str.contains(meaning, regex=True)]
+                tMeaning = meaning.translate({ord(c): "" for c in """!@#$%^&*()[]{};:,./<>?\|`~-=_+"'"""})
+                if len(meaning) == len(tMeaning):
+                    tMeaning = tMeaning.strip('.')
+                    tMeaning = '.' + tMeaning + '.'
+                    tdf = tdf[tdf.meaning.str.contains(tMeaning, regex=True)]
+                else:
+                    tdf = tdf[tdf.tMeaning == False]
             except:
-                tdf = tdf[tdf.meaning == False]
+                tdf = tdf[tdf.tMeaning == False]
 
         displayCount = str(len(tdf))
         availabeCount = displayCount
@@ -91,8 +101,9 @@ def process(word, meaning, asai, seer, wordSearchTypeKey):
             tdf = tdf[:maxLimit]
         status = 'Showing ' + displayCount + ' from ' + availabeCount
 
-        if seer in ['நேர்பு', 'நிரைபு']:
-            result = tdf[['word', 'meaning', 'asai', 'seerpu']].to_json(orient='records', force_ascii=False)
+        if asai in ['நேர்பு', 'நிரைபு'] or seer in ['காசு', 'பிறப்பு']:
+            result = tdf[['word', 'meaning', 'asaipu', 'seerpu']].to_json(orient='records', force_ascii=False)
+            result.columns = ['word', 'meaning', 'asai', 'seer']
         else:
             result = tdf[['word', 'meaning', 'asai', 'seer']].to_json(orient='records', force_ascii=False)
         tdf = None
@@ -128,4 +139,4 @@ port = int(os.getenv('PORT', 8080))
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=port, debug=True)
-    #app.run()
+    # app.run()

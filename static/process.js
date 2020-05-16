@@ -1,6 +1,7 @@
 $(document).ready(function() {
 	$('#inputForm').on('submit', function(event) {
 	    $('#status').html('Searching ......');
+	    $('#resultTable tr').not(':first').remove();
 	    var seer = $('#seer').val();
 	    var asai = $('#asai').val();
 	    var word = $('#word').val().trim();
