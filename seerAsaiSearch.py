@@ -43,7 +43,6 @@ def process(word, meaning, asai, seer, wordSearchTypeKey):
                 tdf = tdf[tdf.asaipu == asai]
             else:
                 tdf = tdf[tdf.asai == asai]
-
         if word is not None and word not in [' ', '']:
             if len(word) == len(word.translate({ord(c): "" for c in """!@#$%^&*()[]{};:,./<>?\|`~-=_+"'"""})):
                 tWord = word.strip()
@@ -102,8 +101,9 @@ def process(word, meaning, asai, seer, wordSearchTypeKey):
         status = 'Showing ' + displayCount + ' from ' + availabeCount
 
         if asai in ['நேர்பு', 'நிரைபு'] or seer in ['காசு', 'பிறப்பு']:
-            result = tdf[['word', 'meaning', 'asaipu', 'seerpu']].to_json(orient='records', force_ascii=False)
+            result = tdf[['word', 'meaning', 'asaipu', 'seerpu']]
             result.columns = ['word', 'meaning', 'asai', 'seer']
+            result = result.to_json(orient='records', force_ascii=False)
         else:
             result = tdf[['word', 'meaning', 'asai', 'seer']].to_json(orient='records', force_ascii=False)
         tdf = None
@@ -131,7 +131,7 @@ def startProcess():
         result, status = process(word, meaning, asai, seer, wordSearchTypeKey)
     except:
         result = [{'word': ' ', 'meaning': ' ', 'asai': ' ', 'seer': ' '}]
-        status = ' '
+        status = ' err '
     return jsonify({'result': result, 'status': status})
 
 
