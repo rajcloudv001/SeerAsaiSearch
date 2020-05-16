@@ -84,7 +84,7 @@ def process(word, meaning, asai, seer, wordSearchTypeKey):
 
         displayCount = str(len(tdf))
         availabeCount = displayCount
-        maxLimit = 2000
+        maxLimit = 1000
         if len(tdf) > maxLimit:
             tdf.reset_index(inplace=True, drop=True)
             displayCount = str(maxLimit)
